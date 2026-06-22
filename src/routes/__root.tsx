@@ -73,24 +73,38 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     </div>
   );
 }
-
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "ShopFlow Notify is a multi-shop SaaS platform for food courts, managing orders and customer engagement." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "ShopFlow Notify is a multi-shop SaaS platform for food courts, managing orders and customer engagement." },
+
+      { title: "FoodCourtNotify" },
+
+      {
+        name: "description",
+        content: "FoodCourtNotify - Smart order management, customer engagement and notification platform for restaurants, food courts and cafes."
+      },
+
+      { name: "author", content: "FoodCourtNotify" },
+
+      { property: "og:title", content: "FoodCourtNotify" },
+
+      {
+        property: "og:description",
+        content: "Smart order management and customer engagement platform."
+      },
+
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "ShopFlow Notify is a multi-shop SaaS platform for food courts, managing orders and customer engagement." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d6a109a7-d0ef-4bf9-9004-f6c514cab26e/id-preview-0a198689--57de14a0-c8bc-47d0-8f87-c44f7c8490d1.lovable.app-1782027660831.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d6a109a7-d0ef-4bf9-9004-f6c514cab26e/id-preview-0a198689--57de14a0-c8bc-47d0-8f87-c44f7c8490d1.lovable.app-1782027660831.png" },
+
+      { name: "twitter:card", content: "summary_large_image" },
+
+      { name: "twitter:title", content: "FoodCourtNotify" },
+
+      {
+        name: "twitter:description",
+        content: "Smart order management and customer engagement platform."
+      }
     ],
     links: [
       {

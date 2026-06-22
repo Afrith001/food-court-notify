@@ -60,7 +60,7 @@ export function AppSidebar({
               )}
             >
               <Icon className="w-4 h-4" />
-              {t(`common.${it.key}`)}
+              {it.key.charAt(0).toUpperCase() + it.key.slice(1)}
             </Link>
           );
         })}
