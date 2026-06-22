@@ -10,6 +10,7 @@ import {
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   limit,
   query,
@@ -159,13 +160,55 @@ function SignInCard() {
       const cred = await signInWithEmailAndPassword(auth, email.trim(), password);
 
       // Verify the user belongs to a shop matching `shopName`
-      const staffSnap = await getDocs(
+      let staffSnap = await getDocs(
         query(
           collection(db, COL.staff),
           where("userId", "==", cred.user.uid),
           where("active", "==", true),
         ),
       );
+
+      if (staffSnap.empty) {
+        // Attempt legacy account recovery by checking if there's a shop with ownerId === cred.user.uid
+        const shopsSnap = await getDocs(
+          query(
+            collection(db, COL.shops),
+            where("ownerId", "==", cred.user.uid),
+            limit(1),
+          ),
+        );
+        if (!shopsSnap.empty) {
+          const shopDoc = shopsSnap.docs[0];
+          const shopId = shopDoc.id;
+
+          // Fetch user info for fullName & email
+          const userDoc = await getDoc(doc(db, COL.users, cred.user.uid));
+          const userData = userDoc.exists() ? userDoc.data() : null;
+          const fullName = userData?.fullName || cred.user.displayName || "Owner";
+          const emailVal = userData?.email || cred.user.email || "";
+
+          // Create the missing owner staff record
+          await setDoc(doc(collection(db, COL.staff)), {
+            shopId,
+            userId: cred.user.uid,
+            role: "owner",
+            fullName,
+            email: emailVal,
+            active: true,
+            createdAt: serverTimestamp(),
+          });
+
+          // Re-query staff
+          staffSnap = await getDocs(
+            query(
+              collection(db, COL.staff),
+              where("userId", "==", cred.user.uid),
+              where("active", "==", true),
+            ),
+          );
+        }
+      }
+
       if (staffSnap.empty) {
         await signOut(auth);
         toast.error("This account is not linked to any shop.");
@@ -175,8 +218,7 @@ function SignInCard() {
       const target = shopName.trim().toLowerCase();
       let matched = false;
       for (const sid of shopIds) {
-        const { getDoc, doc: docRef } = await import("firebase/firestore");
-        const sd = await getDoc(docRef(db, COL.shops, sid));
+        const sd = await getDoc(doc(db, COL.shops, sid));
         if (sd.exists() && ((sd.data() as { name: string }).name ?? "").toLowerCase().trim() === target) {
           matched = true;
           break;

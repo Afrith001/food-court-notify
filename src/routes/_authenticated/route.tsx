@@ -1,7 +1,5 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { getFirebaseAuth } from "@/lib/firebase";
+import { useEffect } from "react";
 import { AppSidebar } from "@/components/AppSidebar";
 import { TopBar } from "@/components/TopBar";
 import { Toaster } from "@/components/ui/sonner";
@@ -23,16 +21,19 @@ function AuthLayout() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { shop, loading } = useShop();
-  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    const auth = getFirebaseAuth();
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setChecked(true);
-      if (!u) navigate({ to: "/auth" });
-    });
-    return () => unsub();
-  }, [navigate]);
+    // Do not redirect until:
+    // 1. Firebase auth state restored (authLoading is false)
+    // 2. staff lookup completed (useShop loading is false)
+    // 3. shop lookup completed (useShop loading is false)
+    if (authLoading || loading) return;
+
+    if (!user) {
+      console.log("[AuthLayout] Auth state is fully restored and user is null. Redirecting to /auth.");
+      navigate({ to: "/auth" });
+    }
+  }, [user, authLoading, loading, navigate]);
 
   useEffect(() => {
     if (user && fcmConfigured) {
@@ -42,7 +43,7 @@ function AuthLayout() {
     }
   }, [user]);
 
-  if (!checked || authLoading || loading) {
+  if (authLoading || loading) {
     return <div className="min-h-screen grid place-items-center text-muted-foreground">Loading…</div>;
   }
 
