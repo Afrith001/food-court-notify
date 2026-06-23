@@ -134,24 +134,30 @@ const ta = {
 
 const isBrowser = typeof window !== "undefined";
 
-if (!i18n.isInitialized) {
-  let instance = i18n;
+let instance = i18n;
+
+if (!instance.isInitialized) {
   if (isBrowser) {
     instance = instance.use(LanguageDetector);
   }
-  
-  instance.use(initReactI18next).init({
-    resources: { en: { translation: en }, ta: { translation: ta } },
-    fallbackLng: "en",
-    supportedLngs: ["en", "ta"],
-    interpolation: { escapeValue: false },
-    lng: isBrowser ? localStorage.getItem("i18nextLng") || "en" : "en",
-    detection: isBrowser ? {
-      order: ["localStorage", "navigator"],
-      caches: ["localStorage"],
-      lookupLocalStorage: "i18nextLng"
-    } : undefined,
-  });
+  instance.use(initReactI18next);
 }
+
+instance.init({
+  resources: { en: { translation: en }, ta: { translation: ta } },
+  fallbackLng: "en",
+  supportedLngs: ["en", "ta"],
+  load: "languageOnly",
+  ns: ["translation"],
+  defaultNS: "translation",
+  interpolation: { escapeValue: false },
+  lng: isBrowser ? (localStorage.getItem("i18nextLng") || undefined) : "en",
+  detection: isBrowser ? {
+    order: ["localStorage", "navigator"],
+    caches: ["localStorage"],
+    lookupLocalStorage: "i18nextLng"
+  } : undefined,
+});
+
 
 export default i18n;

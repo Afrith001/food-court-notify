@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 import {
   addDoc,
   collection,
@@ -43,7 +45,11 @@ type Coupon = {
 };
 
 export const Route = createFileRoute("/_authenticated/coupons")({
-  head: () => ({ meta: [{ title: "Coupons · FoodCourtNotify" }] }),
+  head: () => ({
+    meta: [
+      { title: `${i18n.t("common.coupons")} · ${i18n.t("common.appName")}` },
+    ],
+  }),
   component: CouponsPage,
 });
 
@@ -51,6 +57,11 @@ function CouponsPage() {
   const { shop } = useShop();
   const [rows, setRows] = useState<Coupon[]>([]);
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = `${t("common.coupons")} · ${t("common.appName")}`;
+  }, [t]);
 
   useEffect(() => {
     if (!shop) return;
@@ -77,7 +88,7 @@ function CouponsPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-        <h1 className="font-display text-3xl font-bold">Coupons</h1>
+        <h1 className="font-display text-3xl font-bold">{t("common.coupons")}</h1>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="w-full sm:w-auto">

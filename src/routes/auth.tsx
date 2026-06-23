@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
+import i18n from "@/lib/i18n";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -35,7 +36,7 @@ export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Sign in · FoodCourtNotify" },
+      { title: `${i18n.t("common.signIn")} · ${i18n.t("common.appName")}` },
       {
         name: "description",
         content: "Sign in to your shop dashboard or create a new shop on FoodCourtNotify.",

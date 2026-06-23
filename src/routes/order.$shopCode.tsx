@@ -94,15 +94,18 @@ function CustomerPortal() {
 
   // Real-time status of placed order
   useEffect(() => {
-    if (!order) return;
+    if (!order?.id) return;
     const unsub = onSnapshot(doc(getDb(), COL.orders, order.id), (snap) => {
       if (!snap.exists()) return;
       const data = snap.data() as { status: string };
-      setOrder((o) => (o ? { ...o, status: data.status } : o));
+      setOrder((o) => {
+        if (!o || o.status === data.status) return o;
+        return { ...o, status: data.status };
+      });
       if (data.status === "ready") toast.success("Your order is ready for pickup!");
     });
     return () => unsub();
-  }, [order]);
+  }, [order?.id]);
 
   const place = async (e: React.FormEvent) => {
     e.preventDefault();

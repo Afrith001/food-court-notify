@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 import {
   collection,
   doc,
@@ -36,13 +38,22 @@ const COLUMNS: Array<{ key: string; label: string; next?: string }> = [
 ];
 
 export const Route = createFileRoute("/_authenticated/orders")({
-  head: () => ({ meta: [{ title: "Orders · FoodCourtNotify" }] }),
+  head: () => ({
+    meta: [
+      { title: `${i18n.t("common.orders")} · ${i18n.t("common.appName")}` },
+    ],
+  }),
   component: OrdersPage,
 });
 
 function OrdersPage() {
   const { shop } = useShop();
   const [orders, setOrders] = useState<Order[]>([]);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = `${t("common.orders")} · ${t("common.appName")}`;
+  }, [t]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -80,7 +91,7 @@ function OrdersPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="font-display text-3xl font-bold">Orders</h1>
+      <h1 className="font-display text-3xl font-bold">{t("common.orders")}</h1>
       <p className="text-muted-foreground text-sm">Real-time order Kanban — advance through the stages.</p>
       {loading ? (
         <div className="text-muted-foreground">Loading…</div>
@@ -91,7 +102,7 @@ function OrdersPage() {
             return (
               <div key={col.key} className="space-y-2">
                 <div className="flex items-center justify-between px-1">
-                  <h3 className="font-medium text-sm">{col.label}</h3>
+                  <h3 className="font-medium text-sm">{t("orders." + col.key)}</h3>
                   <Badge variant="secondary">{colOrders.length}</Badge>
                 </div>
                 <div className="space-y-2 min-h-[100px]">
@@ -118,7 +129,7 @@ function OrdersPage() {
                           <span className="text-sm font-semibold">₹{Number(o.total).toFixed(0)}</span>
                           {col.next && (
                             <Button size="sm" variant="outline" onClick={() => advance(o.id, col.next!)}>
-                              Mark {col.next}
+                              Mark {t("orders." + col.next)}
                             </Button>
                           )}
                         </div>

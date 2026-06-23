@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 import {
   collection,
   onSnapshot,
@@ -23,7 +25,11 @@ import { generateQrDataUrl, buildPortalUrl } from "@/lib/qr";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard · FoodCourtNotify" }] }),
+  head: () => ({
+    meta: [
+      { title: `${i18n.t("common.dashboard")} · ${i18n.t("common.appName")}` },
+    ],
+  }),
   component: Dashboard,
 });
 
@@ -32,6 +38,11 @@ type OrderRow = { status: string; total: number; createdAt: Timestamp | null };
 function Dashboard() {
   const { shop } = useShop();
   const [qr, setQr] = useState<string>("");
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = `${t("common.dashboard")} · ${t("common.appName")}`;
+  }, [t]);
   const [stats, setStats] = useState({
     total: 0,
     today: 0,
@@ -113,7 +124,7 @@ function Dashboard() {
   return (
     <div className="space-y-6 max-w-7xl">
       <div>
-        <h1 className="font-display text-3xl font-bold">Welcome, {shop.name}</h1>
+        <h1 className="font-display text-3xl font-bold">{t("dashboard.welcome")}, {shop.name}</h1>
         <p className="text-muted-foreground text-sm mt-1">Your real-time shop overview.</p>
       </div>
 

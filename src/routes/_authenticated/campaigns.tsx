@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 import {
   addDoc,
   collection,
@@ -51,7 +53,11 @@ type Campaign = {
 };
 
 export const Route = createFileRoute("/_authenticated/campaigns")({
-  head: () => ({ meta: [{ title: "Campaigns · FoodCourtNotify" }] }),
+  head: () => ({
+    meta: [
+      { title: `${i18n.t("common.campaigns")} · ${i18n.t("common.appName")}` },
+    ],
+  }),
   component: CampaignsPage,
 });
 
@@ -59,6 +65,11 @@ function CampaignsPage() {
   const { shop } = useShop();
   const [rows, setRows] = useState<Campaign[]>([]);
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = `${t("common.campaigns")} · ${t("common.appName")}`;
+  }, [t]);
 
   useEffect(() => {
     if (!shop) return;
@@ -109,7 +120,7 @@ function CampaignsPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-        <h1 className="font-display text-3xl font-bold">Campaigns</h1>
+        <h1 className="font-display text-3xl font-bold">{t("common.campaigns")}</h1>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="w-full sm:w-auto">

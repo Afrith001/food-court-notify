@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 import {
   collection,
   onSnapshot,
@@ -33,7 +35,11 @@ type Customer = {
 };
 
 export const Route = createFileRoute("/_authenticated/customers")({
-  head: () => ({ meta: [{ title: "Customers · FoodCourtNotify" }] }),
+  head: () => ({
+    meta: [
+      { title: `${i18n.t("common.customers")} · ${i18n.t("common.appName")}` },
+    ],
+  }),
   component: CustomersPage,
 });
 
@@ -41,6 +47,11 @@ function CustomersPage() {
   const { shop } = useShop();
   const [rows, setRows] = useState<Customer[]>([]);
   const [q, setQ] = useState("");
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = `${t("common.customers")} · ${t("common.appName")}`;
+  }, [t]);
 
   useEffect(() => {
     if (!shop) return;
@@ -84,10 +95,10 @@ function CustomersPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="font-display text-3xl font-bold">Customers</h1>
+        <h1 className="font-display text-3xl font-bold">{t("common.customers")}</h1>
         <Button variant="outline" onClick={exportCsv} className="w-full sm:w-auto">
           <Download className="w-4 h-4 mr-2" />
-          Export CSV
+          {t("common.export")}
         </Button>
       </div>
       <div className="relative max-w-sm">

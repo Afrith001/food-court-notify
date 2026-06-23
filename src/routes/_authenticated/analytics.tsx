@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 import {
   collection,
   getDocs,
@@ -23,7 +25,11 @@ import {
 } from "recharts";
 
 export const Route = createFileRoute("/_authenticated/analytics")({
-  head: () => ({ meta: [{ title: "Analytics · FoodCourtNotify" }] }),
+  head: () => ({
+    meta: [
+      { title: `${i18n.t("common.analytics")} · ${i18n.t("common.appName")}` },
+    ],
+  }),
   component: AnalyticsPage,
 });
 
@@ -31,6 +37,11 @@ function AnalyticsPage() {
   const { shop } = useShop();
   const [hourly, setHourly] = useState<Array<{ hour: string; orders: number }>>([]);
   const [daily, setDaily] = useState<Array<{ day: string; revenue: number }>>([]);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = `${t("common.analytics")} · ${t("common.appName")}`;
+  }, [t]);
 
   useEffect(() => {
     if (!shop) return;
@@ -56,7 +67,7 @@ function AnalyticsPage() {
 
   return (
     <div className="space-y-4 max-w-6xl">
-      <h1 className="font-display text-3xl font-bold">Analytics</h1>
+      <h1 className="font-display text-3xl font-bold">{t("common.analytics")}</h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="shadow-soft">
           <CardHeader>

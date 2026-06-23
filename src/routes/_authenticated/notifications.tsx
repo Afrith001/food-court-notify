@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 import {
   collection,
   deleteDoc,
@@ -28,13 +30,22 @@ type Notif = {
 };
 
 export const Route = createFileRoute("/_authenticated/notifications")({
-  head: () => ({ meta: [{ title: "Notifications · FoodCourtNotify" }] }),
+  head: () => ({
+    meta: [
+      { title: `${i18n.t("common.notifications")} · ${i18n.t("common.appName")}` },
+    ],
+  }),
   component: NotificationsPage,
 });
 
 function NotificationsPage() {
   const { shop } = useShop();
   const [rows, setRows] = useState<Notif[]>([]);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = `${t("common.notifications")} · ${t("common.appName")}`;
+  }, [t]);
 
   useEffect(() => {
     if (!shop) return;
@@ -66,7 +77,7 @@ function NotificationsPage() {
   return (
     <div className="space-y-4 max-w-3xl">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-        <h1 className="font-display text-3xl font-bold">Notifications</h1>
+        <h1 className="font-display text-3xl font-bold">{t("common.notifications")}</h1>
         <Button variant="outline" size="sm" onClick={markAll} className="w-full sm:w-auto">
           Mark all as read
         </Button>

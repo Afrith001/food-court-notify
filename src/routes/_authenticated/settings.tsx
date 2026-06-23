@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 import {
   collection,
   doc,
@@ -28,14 +30,24 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/settings")({
-  head: () => ({ meta: [{ title: "Settings · FoodCourtNotify" }] }),
+  head: () => ({
+    meta: [
+      { title: `${i18n.t("common.settings")} · ${i18n.t("common.appName")}` },
+    ],
+  }),
   component: SettingsPage,
 });
 
 function SettingsPage() {
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = `${t("common.settings")} · ${t("common.appName")}`;
+  }, [t]);
+
   return (
     <div className="space-y-4 max-w-3xl">
-      <h1 className="font-display text-3xl font-bold">Settings</h1>
+      <h1 className="font-display text-3xl font-bold">{t("common.settings")}</h1>
       <Tabs defaultValue="profile">
         <TabsList className="flex flex-wrap h-auto w-full justify-start mb-4">
           <TabsTrigger value="profile">Shop profile</TabsTrigger>

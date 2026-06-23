@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { getDb, COL } from "@/lib/firebase";
 import { useShop } from "@/hooks/useShop";
@@ -43,13 +45,22 @@ type Plan = (typeof PLANS)[number]["id"];
 type Sub = { plan: Plan; ordersUsedThisMonth: number; expiresAt: string };
 
 export const Route = createFileRoute("/_authenticated/subscription")({
-  head: () => ({ meta: [{ title: "Subscription · FoodCourtNotify" }] }),
+  head: () => ({
+    meta: [
+      { title: `${i18n.t("common.subscription")} · ${i18n.t("common.appName")}` },
+    ],
+  }),
   component: SubscriptionPage,
 });
 
 function SubscriptionPage() {
   const { shop } = useShop();
   const [sub, setSub] = useState<Sub | null>(null);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = `${t("common.subscription")} · ${t("common.appName")}`;
+  }, [t]);
 
   const load = async () => {
     if (!shop) return;
@@ -84,7 +95,7 @@ function SubscriptionPage() {
 
   return (
     <div className="space-y-6 max-w-5xl">
-      <h1 className="font-display text-3xl font-bold">Subscription</h1>
+      <h1 className="font-display text-3xl font-bold">{t("common.subscription")}</h1>
       {sub && (
         <Card className="shadow-soft gradient-card">
           <CardHeader>
